@@ -350,5 +350,24 @@ directory and checkpoint format without reading any files. `/vibe-wise:learn` in
 fresh project created the three notes and asked "What are we doing?" with the text
 fallback. `/vibe-wise:reset` ran the helper's read-only preview from the plugin path
 without a permission prompt and left the notes unchanged pending confirmation.
-All 20 Node tests pass. The interactive `question` picker, the git-spec install
-(which needs these files on the remote), and real compaction still need checks.
+Installing from the pushed git spec listed both commands.
+
+Follow-up checks drove `opencode serve` through its HTTP API, answering `question`
+requests the way the TUI does and rejecting any permission prompt. The first run
+found a bug: the Learn command opened with the guide's "Read behavior.md", so the
+model searched the disk, found a Claude Code plugin cache copy, and stopped on an
+`external_directory` prompt. Templates and restored context now open with a note
+that the guides are included and must not be read from disk. After the fix:
+
+- Onboarding asked Project, building, and experience through the picker, one
+  question per call, saved the profile, then asked the learner's approach without
+  writing code. The free model skipped the preferences picker and asked "what are
+  you building" as a picker instead of in chat; both are model-quality deviations.
+- With a pending Implementation checkpoint, "Where were we?" restored it from the
+  notes and offered Implement this step / Discuss in the picker. After an explicit
+  approval and a real `/summarize` compaction, "Ok, continue." only re-read notes
+  and re-asked the open Build checkpoint; the model still named the state directory
+  and the pending stage. No permission prompts occurred.
+
+All 21 Node tests pass. The TUI's visual rendering of the picker wasn't checked;
+the API path it uses was.

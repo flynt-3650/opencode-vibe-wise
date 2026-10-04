@@ -36,8 +36,15 @@ const OPENCODE_NOTES = `OpenCode notes: these VibeWise guides were written for C
 - Read, Glob, Grep, Bash, Edit, and Write are the \`read\`, \`glob\`, \`grep\`, \`bash\`, \`edit\`, and \`write\` tools.
 - \`/vibe-wise:learn\` and \`/vibe-wise:reset\` are OpenCode commands with the same names.
 - Mentions of Claude Code mean OpenCode; Claude means you.
-- If \`python3\` isn't available, use \`python\` (on Windows, \`py -3\`).
-- Plugin guides are included in your context when needed. Don't read them from the plugin folder.`
+- If \`python3\` isn't available, use \`python\` (on Windows, \`py -3\`).`
+
+// Guides tell Claude to read their companion files. Weaker models follow that
+// literally, search the disk, and may find another installed VibeWise version.
+const GUIDES_INCLUDED =
+  "The VibeWise guides needed here are included in this message inside <vibe-wise-guide> " +
+  "tags. Wherever a guide says to read SKILL.md, behavior.md, onboarding.md, or " +
+  "state-templates.md, use the included text. Don't search for these files or read them " +
+  "from disk: copies elsewhere, such as another installed plugin, may be a different version."
 
 function readGuide(directory, name) {
   const text = fs.readFileSync(path.join(directory, name), "utf8").replace(/\r\n/g, "\n")
@@ -70,10 +77,11 @@ function buildCommands(guides) {
   return {
     "vibe-wise:learn": {
       description: description(LEARN_DIR),
+      // Notes come first so they're read before the guide's "Read behavior.md".
       template: [
-        learn["SKILL.md"],
+        GUIDES_INCLUDED,
         OPENCODE_NOTES,
-        "The guides referenced above follow.",
+        guideBlock("SKILL.md", learn["SKILL.md"]),
         guideBlock("behavior.md", learn["behavior.md"]),
         guideBlock("onboarding.md", learn["onboarding.md"]),
         guideBlock("state-templates.md", learn["state-templates.md"]),
@@ -82,10 +90,12 @@ function buildCommands(guides) {
     "vibe-wise:reset": {
       description: description(RESET_DIR),
       template: [
-        guides.reset,
         OPENCODE_NOTES,
-        "After a successful reset, the Learn guide is added to your context automatically " +
-          "because the new profile is active. Follow it instead of reading SKILL.md from the plugin folder.",
+        "After a successful reset, the Learn guides are added to your context automatically " +
+          "because the new profile is active. Where this guide says to read the Learn SKILL.md, " +
+          "use that included text. Don't search for these files or read them from disk: copies " +
+          "elsewhere, such as another installed plugin, may be a different version.",
+        guideBlock("reset/SKILL.md", guides.reset),
       ].join("\n\n"),
     },
   }
@@ -171,8 +181,8 @@ function restoreContext(directory, guides) {
   // doesn't grow with learning history.
   return [
     MARKER,
-    "VibeWise is active for this project. The Learn guide and the instructions it " +
-      "references are included below. Follow them before responding or coding.",
+    "VibeWise is active for this project. Follow the Learn guide below before responding or coding.",
+    GUIDES_INCLUDED,
     `State directory: ${state}`,
     "Read profile.md and project-map.md there. Search the entire progress.md for " +
       "pending decisions, then read their complete sections and other topics relevant " +

@@ -101,6 +101,23 @@ test("config hook registers learn and reset commands", async () => {
   assert.match(learn.template, /`question` tool/)
 })
 
+test("guides-included note comes before any instruction to read a guide", async () => {
+  // A model that reads top-down otherwise searches the disk for behavior.md and can
+  // load another installed copy, which also triggers an OpenCode permission prompt.
+  const config = {}
+  await (await hooks()).config(config)
+  state()
+  const texts = { ...Object.fromEntries(Object.entries(config.command).map(([k, v]) => [k, v.template])), restore: await restore() }
+  for (const [name, text] of Object.entries(texts)) {
+    const note = text.indexOf("Don't search for these files")
+    assert.ok(note >= 0, name)
+    for (const read of [/Read \[behavior\.md\]/, /Read `[^`]*SKILL\.md`/]) {
+      const at = text.search(read)
+      if (at >= 0) assert.ok(note < at, `${name}: ${read}`)
+    }
+  }
+})
+
 test("reset command points at the installed helper", async () => {
   const config = {}
   await (await hooks()).config(config)
