@@ -41,6 +41,26 @@ Restart Claude Code in the project you want to work on, then run:
 
 Setup asks one question at a time. Use the arrow keys and Enter for choices; pick **Use defaults** to skip preference setup. Then ask Claude to build something. Starting fresh or joining an unfamiliar repository both work. For an existing repository, Claude first inspects the code and sketches a small system map.
 
+### Using OpenCode
+
+VibeWise also runs in [OpenCode](https://opencode.ai) 1.x with the same guides
+and the same `.vibe-wise/` notes. Add it to `opencode.json` in your project, or to
+`~/.config/opencode/opencode.json` for every project:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["vibe-wise@git+https://github.com/flynt-3650/vibe-wise-opencode.git"]
+}
+```
+
+Restart OpenCode in your project, then run `/vibe-wise:learn`. `/vibe-wise:reset`
+works the same way. Python 3 is still needed for reset. To use a local clone instead,
+put its absolute path in `plugin`, for example `"C:/code/vibe-wise"`.
+
+OpenCode can cache git plugins, so if an update doesn't show up after a restart,
+clear OpenCode's package cache (`~/.cache/opencode`).
+
 ## What it feels like
 
 You're building a Notion-style notes app: users sign in, create and edit private
