@@ -1,5 +1,5 @@
 {
-  "name": "vibe-wise",
+  "name": "opencode-vibe-wise",
   "version": "0.1.43",
   "description": "You build. AI writes. Learn how to build software while AI writes the code.",
   "type": "module",
@@ -14,7 +14,7 @@
   "author": "Noah Kim",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flynt-3650/vibe-wise-opencode.git"
+    "url": "git+https://github.com/flynt-3650/opencode-vibe-wise.git"
   },
   "license": "MIT",
   "scripts": {

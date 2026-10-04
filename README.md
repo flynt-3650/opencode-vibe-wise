@@ -50,7 +50,7 @@ and the same `.vibe-wise/` notes. Add it to `opencode.json` in your project, or 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["vibe-wise@git+https://github.com/flynt-3650/vibe-wise-opencode.git"]
+  "plugin": ["opencode-vibe-wise@git+https://github.com/flynt-3650/opencode-vibe-wise.git"]
 }
 ```
 
