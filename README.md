@@ -63,7 +63,7 @@ and the same `.vibe-wise/` notes. Add it to `opencode.json` in your project, or 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "plugin": ["opencode-vibe-wise@git+https://github.com/flynt-3650/opencode-vibe-wise.git"]
+  "plugin": ["opencode-vibe-wise@git+https://github.com/nykooi1/vibe-wise.git"]
 }
 ```
 
@@ -73,6 +73,11 @@ put its absolute path in `plugin`, for example `"C:/code/vibe-wise"`.
 
 OpenCode can cache git plugins, so if an update doesn't show up after a restart,
 clear OpenCode's package cache (`~/.cache/opencode`).
+
+Session restoration uses OpenCode's `experimental.chat.messages.transform` hook,
+which may change between releases. It works with OpenCode 1.x; 2.x isn't supported
+yet. In a project with active learning, the guides (about 16 KB, 20 KB while
+onboarding is unfinished) are added to the model's context on every step.
 
 ## What it feels like
 

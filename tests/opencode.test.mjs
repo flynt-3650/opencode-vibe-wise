@@ -164,6 +164,7 @@ test("active project restores into the first user message only", async () => {
   assert.equal(context.type, "text")
   assert.equal(context.synthetic, true)
   assert.equal(context.messageID, "msg_1")
+  assert.notEqual(context.id, first.parts[1].id)
   assert.ok(context.text.includes(`State directory: ${notes}`))
   assert.match(context.text, /Restarting or compacting is not approval/)
   assert.ok(context.text.includes('<vibe-wise-guide file="behavior.md">'))
@@ -180,10 +181,13 @@ test("restoration is not injected twice", async () => {
   assert.equal(output.messages[0].parts.length, 2)
 })
 
-test("onboarding guide is included only while onboarding is incomplete", async () => {
-  state(project, { onboarding: "incomplete" })
+test("onboarding guide is included until onboarding is complete", async () => {
+  const notes = state(project, { onboarding: "incomplete" })
   assert.ok((await restore()).includes('<vibe-wise-guide file="onboarding.md">'))
-  fs.rmSync(path.join(project, ".vibe-wise"), { recursive: true })
+  // Without a status line, the guide is included rather than withheld.
+  fs.writeFileSync(path.join(notes, "profile.md"), "# Learner Profile\nLearning mode: active\n")
+  assert.ok((await restore()).includes('<vibe-wise-guide file="onboarding.md">'))
+  fs.rmSync(notes, { recursive: true })
   state()
   assert.ok(!(await restore()).includes('<vibe-wise-guide file="onboarding.md">'))
 })

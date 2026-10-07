@@ -145,7 +145,9 @@ function profileStatus(file) {
   return {
     // Older profiles may lack an explicit mode. Preserve their restoration behavior.
     active: text.trim() !== "",
-    onboardingIncomplete: lines.some((line) => /^Onboarding:\s*incomplete\s*$/i.test(line)),
+    // Only an explicit completion line skips the onboarding guide. A profile without
+    // it would otherwise get neither the guide nor permission to read it from disk.
+    onboardingComplete: lines.some((line) => /^Onboarding:\s*complete\s*$/i.test(line)),
   }
 }
 
@@ -175,7 +177,7 @@ function restoreContext(directory, guides) {
     guideBlock("state-templates.md", learn["state-templates.md"]),
   ]
   // Onboarding instructions only matter until onboarding is complete.
-  if (status.onboardingIncomplete) blocks.push(guideBlock("onboarding.md", learn["onboarding.md"]))
+  if (!status.onboardingComplete) blocks.push(guideBlock("onboarding.md", learn["onboarding.md"]))
 
   // Instructions point to the notes instead of copying them, so this context
   // doesn't grow with learning history.
@@ -250,7 +252,8 @@ async function server({ client, directory }) {
         // prefix stable for caching and avoids extra system messages that some
         // models reject.
         firstUser.parts.unshift({
-          id: ref.id,
+          // A distinct id, so nothing keyed by part id confuses it with the user's text.
+          id: `${ref.id}-vibe-wise`,
           sessionID: ref.sessionID,
           messageID: ref.messageID,
           type: "text",
