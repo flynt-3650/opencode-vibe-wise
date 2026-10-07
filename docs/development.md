@@ -189,7 +189,7 @@ helper are shared; only the wiring differs:
 | --- | --- |
 | `skills/*/SKILL.md` with `disable-model-invocation` | Commands `vibe-wise:learn` / `vibe-wise:reset`, added by the plugin's `config` hook from the same files. Not registered as OpenCode skills, because the model could load those on its own. |
 | `hooks/session_start.py` on `SessionStart` | `experimental.chat.messages.transform`, a JS port of the same state lookup and activation checks. Messages are rebuilt every step, so it covers startup, resume, and compaction. Subagent (child) sessions are skipped. |
-| Hook output points Claude at plugin files | Guides are included in the context, because OpenCode asks permission for every read outside the project. `onboarding.md` is included only while `Onboarding: incomplete`. |
+| Hook output points Claude at plugin files | Guides are included in the context, because OpenCode asks permission for every read outside the project. `onboarding.md` is left out only once the profile says `Onboarding: complete`. |
 | `${CLAUDE_PLUGIN_ROOT}` | Replaced with the plugin's absolute path (forward slashes) in command templates. |
 | AskUserQuestion, Read, Glob | A short note maps them to `question`, `read`, `glob`, and so on. |
 
